@@ -1,0 +1,44 @@
+import csv
+import pandas as pd
+from textblob import TextBlob
+
+# Specify the CSV file path
+csv_file_path = 'google_reviews.csv'
+
+review_data = []
+
+# Read the reviews and calculate sentiment scores
+with open(csv_file_path, 'r', encoding='utf-8') as file:
+    reader = csv.reader(file)
+
+    # Skip header row
+    next(reader)
+
+    for row in reader:
+        review = row[2]  # Assuming the review text is in the third column
+        blob = TextBlob(review)
+        polarity = blob.sentiment.polarity
+        review_data.append({'review': review, 'sentiment_score': polarity})
+
+# Create a DataFrame from the review data
+df_sentiment = pd.DataFrame(review_data)
+
+# Calculate the average sentiment score
+average_sentiment = df_sentiment['sentiment_score'].mean()
+
+# Save the sentiment scores and average to a new CSV file
+df_sentiment.to_csv('sentiment_scores.csv', index=False)
+
+# Append average sentiment score to the CSV
+with open('sentiment_scores.csv', 'a', newline='', encoding='utf-8') as file:
+    writer = csv.writer(file)
+    writer.writerow(['Average Sentiment', average_sentiment])  # Add a new row for average sentiment
+
+# Print the sentiment scores and average sentiment
+for index, row in df_sentiment.iterrows():
+    print('Review:', row['review'])
+    print('Sentiment Score:', row['sentiment_score'])
+    print('--------------------------')
+
+# Print the average sentiment score
+print('Average Sentiment Score:', average_sentiment)

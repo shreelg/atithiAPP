@@ -1,0 +1,58 @@
+Aggregated review: 
+
+import pandas as pd
+import re
+
+def aggregate_reviews_from_csv(filename='google_reviews.csv'):
+    # Read the reviews from the CSV file
+    df = pd.read_csv(filename)
+    # Aggregate all review text into a single string
+    all_reviews = ' '.join(df['text'])
+    return all_reviews
+
+def clean_and_format_review(review_text):
+    # Remove extra whitespace and properly format the text
+    review_text_cleaned = re.sub(r'\s+', ' ', review_text)
+    review_text_cleaned = re.sub(r'([.!?])(\w)', r'\1 \2', review_text_cleaned)
+    review_text_cleaned = review_text_cleaned.strip().capitalize()
+    return review_text_cleaned
+
+def filter_non_essential_reviews(review_text):
+    # List of non-essential keywords to filter out
+    non_essential_keywords = ['extra', 'small', 'little', 'rice', 'gave me', 'minor', 'tiny', 'slight']
+    # Split the text into sentences
+    sentences = re.split(r'(?<=[.!?]) +', review_text)
+    # Filter sentences that do not contain non-essential keywords
+    essential_sentences = [sentence for sentence in sentences if not any(kw in sentence.lower() for kw in non_essential_keywords)]
+    return essential_sentences
+
+def summarize_reviews(essential_sentences, max_sentences=3):
+    # Summarize the reviews by selecting the first few essential sentences
+    limited_summary = ' '.join(essential_sentences[:max_sentences])
+    return limited_summary
+
+def save_summary_to_csv(summary, filename='summarized_reviews.csv'):
+    # Create a DataFrame with the summarized review
+    df_summary = pd.DataFrame({'summarized_review': [summary]})
+    # Save the summarized review to a CSV file
+    df_summary.to_csv(filename, index=False)
+    print(f"Summary saved to {filename}")
+
+def main():
+    # Aggregate reviews from the CSV file
+    aggregated_reviews = aggregate_reviews_from_csv()
+    # Filter out non-essential parts of the review
+    essential_sentences = filter_non_essential_reviews(aggregated_reviews)
+    # Create a summary of the reviews
+    summarized_review = summarize_reviews(essential_sentences, max_sentences=3)
+    # Clean and format the summarized review
+    legible_review = clean_and_format_review(summarized_review)
+
+    print("AGG Review:")
+    print(legible_review)
+
+    # Save the summarized review to a CSV file
+    save_summary_to_csv(legible_review)
+
+if __name__ == '__main__':
+    main()

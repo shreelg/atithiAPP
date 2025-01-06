@@ -8,8 +8,8 @@ NLP = spacy(x, y)
 
 keywordLIST: ['room', 'bathroom', 'shower', 'friendly', 'spacious'] #add more
 
-API_KEY = 'AIzaSyA1H47l6w1gapsnc_txng9evl_OVO1r2aQ'
-PLACE_ID = 'ChIJoTAo2zabXjkRI4yEnHBwLro'
+API_KEY = 'write here'
+PLACE_ID = 'writehere'
 
 def get_reviews(API_KEY, PLACE_ID):
   reviews[]

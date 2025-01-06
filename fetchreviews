@@ -1,0 +1,60 @@
+import requests
+from datetime import datetime
+import pandas as pd
+
+API_KEY = 'write here'
+PLACE_ID = 'write here'  # place id from google f12 inspect
+
+def get_google_reviews(api_key, place_id):
+    reviews = []
+    next_page_token = None
+
+    while True:
+        url = f'https://maps.googleapis.com/maps/api/place/details/json?place_id={place_id}&fields=reviews&key={api_key}'
+        if next_page_token:
+            url += f'&pagetoken={next_page_token}'
+
+        response = requests.get(url)
+        if response.status_code == 200:
+            data = response.json()
+            reviews_on_page = data.get('result', {}).get('reviews', [])
+            reviews.extend(reviews_on_page)
+
+            next_page_token = data.get('next_page_token')
+
+            # Check if there's another page of reviews
+            if not next_page_token:
+                break
+
+            # Google API requires a short wait before using the next page token
+            time.sleep(2)
+        else:
+            print(f"Error fetching reviews: {response.status_code}")
+
+            break
+
+    return reviews
+
+def save_reviews_to_csv(reviews, filename='google_reviews.csv'):
+    # Convert time to readable format and prepare the data for CSV
+    review_data = [{
+        'author_name': review['author_name'],
+        'rating': review['rating'],
+        'text': review['text'],
+        'time': datetime.utcfromtimestamp(int(review['time'])).strftime('%Y-%m-%d %H:%M:%S'),
+    } for review in reviews if 'text' in review]  # Ensure only reviews with text are included
+
+    # Create dataframe for csv
+    df = pd.DataFrame(review_data)
+    df.to_csv(filename, index=False)
+    print(f"Saved {len(review_data)} reviews to {filename}")
+
+def main():
+    reviews = get_google_reviews(API_KEY, PLACE_ID)
+
+    # Filter reviews with all ratings (e.g., 1-star to 5-star)
+    if reviews:
+         save_reviews_to_csv(reviews)
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,36 @@
+import pandas as pd
+import re
+import csv
+
+import spacy
+
+NLP = spacy(x, y)
+
+keywordLIST: ['room', 'bathroom', 'shower', 'friendly', 'spacious'] #add more
+
+API_KEY = 'AIzaSyA1H47l6w1gapsnc_txng9evl_OVO1r2aQ'
+PLACE_ID = 'ChIJoTAo2zabXjkRI4yEnHBwLro'
+
+def get_reviews(API_KEY, PLACE_ID):
+  reviews[]
+  next_page_TOKEN = None
+
+  while True:
+    url = f''
+    if next_page_token:
+
+
+      reponse = requestions.get(url)
+      if repsonse_stuats_code = 200:
+        data = 0
+        nlp text = 0
+      if response status code >200
+        data = 1
+        nlp text = 1
+
+        reviews_on_page = data.get('result', {})).get(tokens)
+
+        #stop
+
+
+
